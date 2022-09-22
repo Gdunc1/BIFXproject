@@ -1,0 +1,17 @@
+---
+title: "Lab 4"
+author: "Gerard Duncan"
+format: html
+server: shiny
+---
+
+```{r}
+{mermaid}
+graph LR
+    A[Atheletic Activity] --> B(Head Trauma)
+    B --> C{Concussion}
+    C -->|One| D[Subdural Hematoma]
+    C -->|Two| E[CTE]
+    C -->|Three| F[Alzheimer]
+    C -->|Four| G[Dementia]
+```

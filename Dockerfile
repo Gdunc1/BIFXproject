@@ -7,6 +7,9 @@
 # start with shiny server and R
 FROM rocker/shiny:4.2.1
 
+RUN rm -r /shiny-server
+COPY shiny/ /shiny-server
+
 # install missing packages
 RUN R -e 'install.packages(c("dplyr", "ggplot2", "cowplot"))'
 

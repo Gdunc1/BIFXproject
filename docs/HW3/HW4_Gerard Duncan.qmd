@@ -1,0 +1,383 @@
+---
+title: "HW4"
+author: "Gerard Duncan"
+format: docx
+server: shiny
+---
+
+---
+---
+title: "Homework 4 - Graphics, Vectorization, and Functions in R"
+format: docx
+---
+
+```{r}
+#| include: false
+library(gapminder)
+library(dplyr)
+library(RColorBrewer)
+data(gapminder)
+
+library(ggplot2)
+```
+
+Fill out [this Quarto document](https://github.com/BIFX552-22/CourseInfo/hw/04graphics_vectorization_functions.qmd) while completing the lesson on graphics, vectorization and functions in R.
+
+### [R Graphics](https://swcarpentry.github.io/r-novice-gapminder/08-plot-ggplot2/index.html)
+
+::: callout-tip
+## Key Points
+
+-   Use ggplot2 to create plots.
+-   Think about graphics in layers: aesthetics, geometry, statistics, scale transformation, and grouping.
+:::
+
+#### Challenge 1
+
+Modify the example so that the figure shows how life expectancy has changed over time:
+
+```{r}
+ggplot(data = gapminder, mapping = aes(x = gdpPercap, y = lifeExp)) + geom_point()
+geom_point()
+```
+
+#### Challenge 2
+
+In the previous examples and challenge we've used the `aes` function to tell the scatterplot **geom** about the **x** and **y** locations of each point. Another *aesthetic* property we can modify is the point *color*. Modify the code from the previous challenge to **color** the points by the "continent" column. What trends do you see in the data? Are they what you expected?
+
+There were some dips in Africa and Asia
+
+```{r}
+# you code goes here
+
+ggplot(data = gapminder, mapping = aes(x = year, y = lifeExp, color = continent )) + geom_point() +
+geom_line()
+
+
+```
+
+#### Challenge 3
+
+Here is a demonstration of drawing points *on top of* lines.
+
+```{r}
+ggplot(data = gapminder, mapping = aes(x=year, y=lifeExp, by=country)) +
+  geom_line(mapping = aes(color=continent)) + geom_point()
+```
+
+Switch the order of the point and line layers from the previous example. What happened?
+
+```{r}
+# Your code goes here
+ggplot(gapminder,
+       aes(year, lifeExp, by = country)) +
+  geom_point()
+  geom_line(aes(color = continent))
+```
+
+```{r}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.3) +
+  scale_x_log10() +
+  geom_smooth(method = 'lm', se = FALSE, size = 1.5, color = 'green')
+
+```
+
+#### Challenge 4
+
+We can fit a simple relationship to the data by adding another layer, `geom_smooth`:
+
+```{r}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.3) +
+  scale_x_log10() +
+  geom_smooth(method = 'lm', se = FALSE, size = 1.5, color = 'green')
+
+```
+
+Modify the color and size of the points on the point layer in the previous example.
+
+Hint: do not use the `aes` function.
+
+```{r}
+# Your code goes here
+
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(aes(color = continent), alpha = 0.3) +
+  scale_x_log10() +
+  geom_smooth(method = 'lm', se = FALSE, size = 1.5, color = 'black')
+```
+
+Modify your solution above so that the points are now a different shape and are colored by continent with new trendlines. Hint: The **color** argument can be used inside the aesthetic.
+
+```{r}
+# Your code goes here
+
+ggplot(gapminder, aes(gdpPercap, lifeExp, color = continent)) +
+  geom_point(alpha = 1, size = 1, shape = 'a') +
+  scale_x_log10() +
+  geom_smooth(method = 'lm', size = 1)
+```
+
+```{r}
+fig1 <- gapminder[gapminder$continent == 'Americas',]%>%
+    ggplot(aes(year, lifeExp)) +
+    geom_line() +
+    facet_wrap( ~ country) +
+    theme(axis.text.x = element_text(angle = 45)) +
+    labs(x = 'Year',
+         y = 'Life Expectancy',
+         title = 'Figure 1')
+ggsave(filename = 'lifeExp.png' , plot = fig1, width = 15,
+       height = 12, dpi = 300, units = 'cm')
+
+fig1
+```
+
+#### Challenge 5
+
+1.  Generate boxplots to compare life expectancy between the different continents during the available years.
+2.  Rename y axis as Life Expectancy.
+3.  Remove x axis labels.
+
+```{r}
+# your code goes here
+ggplot(gapminder, aes(continent, lifeExp, fill = continent)) +
+    geom_boxplot() +
+    facet_wrap(~ year) +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.x = element_blank()) +
+    labs(y = 'Life Expectancy') +
+    guides(fill = guide_legend(title = 'Continent')) +
+    scale_fill_manual(values = brewer.pal(5, 'Dark2'))
+          
+```
+
+### [Vectorization](https://swcarpentry.github.io/r-novice-gapminder/09-vectorization/index.html)
+
+::: callout-tip
+## Key Points
+
+-   Use vectroized options instead of loops
+:::
+
+#### Challenge 1
+
+Make a new column in the `gapminder` data frame that contains population in units of millions of people. Check the head or tail of the data frame to make sure it worked.
+
+```{r}
+# your code goes here
+gapminder$pop_mil <- gapminder$pop / 1e6
+head(gapminder)
+```
+
+#### Challenge 2
+
+On a single graph, plot population, in millions, against year, for all countries. Do not worry about identifying which country is which.
+
+```{r}
+# your code goes here
+ggplot(gapminder, aes(year, pop_mil)) +
+    geom_point() +
+    scale_y_log10()
+```
+
+Repeat the exercise, graphing only for China, India, and Indonesia. Again, do not worry about which is which.
+
+```{r}
+# your code goes here
+gapminder[gapminder$country %in% c('China' , 'India' , 'Indonesia'),] %>%
+    ggplot(aes(year, pop_mil)) +
+    geom_point()
+```
+
+#### Challenge 3
+
+Given the following matrix:
+
+```{r}
+m <- matrix(1:12, nrow=3, ncol=4)
+m
+```
+
+Write down what you think will happen when you run:
+
+-   `m ^ -1` Every value in the matrix will be inverted
+
+-   `m * c(1, 0, -1)` Each vector is will be multiplied by their respected number in that order
+
+-   `m > c(0, 20)` I'll get a True or False value in the matrix for each statement
+
+-   `m * c(1, 0, -1, 2)` Something weird will happen since the vectors won't match the number of rows.
+
+Did you get the output you expected? If not, let's discuss in class.
+
+#### Challenge 4
+
+We're interested in looking at the sum of the following sequence of fractions:
+
+    x = 1/(1^2) + 1/(2^2) + 1/(3^2) + ... + 1/(n^2)
+
+This would be tedious to type out, and impossible for high values of $n$. Use vectorisation to compute $x$ when $n=100$.
+
+```{r}
+# your code goes here
+n <- 1:100
+
+#vectorized statement
+sum(1 / n^2)
+
+# for loop (longer statement)
+out <- 0
+for (i in 1:length(n))
+    out <- out + 1 / n[i]^2
+out  
+
+```
+
+What is the sum when $n=10,000$?
+
+```{r}
+# your code goes here
+n <- 1:10000
+
+#vectorized statement
+sum(1 / n^2)
+
+# for loop (longer statement)
+out <- 0
+for (i in 1:length(n))
+    out <- out + 1 / n[i]^2
+out
+```
+
+The answer is 1.644834
+
+### [Functions](https://swcarpentry.github.io/r-novice-gapminder/10-functions/index.html)
+
+::: callout-tip
+## Key Points
+
+-   Use function to define a new function in R.
+-   Use parameters to pass values into functions.
+-   Use stopifnot() to flexibly check function arguments in R.
+-   Load functions into programs using source().
+:::
+
+#### Challenge 1
+
+Write a function called `kelvin_to_celsius()` that takes a temperature in Kelvin and returns that temperature in Celsius.
+
+Hint: To convert from Kelvin to Celsius you subtract 273.15
+
+```{r}
+# your code goes here
+kelvin_to_celsius <- function(temp)
+{
+    celsius <- temp - 273.15
+    
+    return(celsius)
+}
+
+
+```
+
+#### Challenge 2
+
+Convert Fahrenheit to Celsius:
+
+```{r}
+fahr_to_kelvin <- function(temp) {
+  kelvin <- ((temp - 32) * (5 / 9)) + 273.15
+  
+  return(kelvin)
+}
+```
+
+Define the function to convert directly from Fahrenheit to Celsius, by reusing your function, `kelvin_to_celsius()`, and the function above.
+
+```{r}
+# your code goes here
+fahr_to_celsius <- function(temp)
+{
+    #Check for numerical value
+    stopifnot(is.numeric(temp))
+    fahr_to_kelvin(temp) %>%
+      kelvin_to_celsius
+}
+```
+
+#### Challenge 3
+
+Use defensive programming to ensure that our `fahr_to_celsius()` function throws an error immediately if the argument temp is specified inappropriately.
+
+```{r}
+# your code goes here
+
+fahr_to_kelvin <- function(temp)
+{
+    stopifnot(is.numeric(temp))
+    kelvin <- ((temp - 32) * (5 / 9)) + 273.15
+    return(kelvin)
+}
+```
+
+```{r}
+#' Calculate GDP for gapminder data
+#' 
+#' This function takes the gapminder dataset and filters on provided parameters, and calculates GDP
+#' 
+#' @param dat data.frame with columns:
+#' @param year
+#' @param country
+
+
+
+calcGDP <- function(dat, year = NULL, country = NULL)
+{
+  #subset by year
+    if(!is.null(year))
+      dat <- dat[dat$year %in% year,]
+    
+    gdp <- dat$pop + dat$gdpPercap
+    
+    #subset by country
+    if(!is.null(year))
+      dat <- dat[dat$country %in% country,]
+    
+    dat$gdp <- dat$pop + dat$gdpPercap
+    
+    
+    
+    return(gdp)
+}
+
+calcGDP(gapminder, year = 2000:2020, country = 'Argentina')
+```
+
+#### Challenge 4
+
+The `paste()` function can be used to combine text together, e.g:
+
+```{r}
+best_practice <- c("Write", "programs", "for", "people", "not", "computers")
+paste(best_practice, collapse=" ")
+```
+
+Write a function called `fence()` that takes two vectors as arguments, called `text` and `wrapper`, and prints out the text wrapped with the wrapper. For example, `fence(text=best_practice, wrapper="***")` should give the following result:
+
+    "*** Write programs for people not computers ***"
+
+```{r}
+# Your code goes here
+
+fence <- function(text, wrapper)
+{
+    paste(wrapper,
+          paste(text, collapse = ''), wrapper)
+}
+
+# check to make sure your code works:
+fence(text=best_practice, wrapper="***")
+```
