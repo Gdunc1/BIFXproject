@@ -1,0 +1,83 @@
+---
+title: "HW6 Joining Tables"
+author: "Gerard Duncan"
+format: html
+editor: visual
+---
+
+---
+title: "Homework 6 - Joining Tables and Software Tips"
+format: docx
+editor: visual
+---
+
+Fill out [this Quarto document](https://github.com/BIFX552-22/CourseInfo/hw/06joining_tables.qmd) while completing the lesson on graphics, vectorization and functions in R.
+
+```{r}
+#| include: false
+if(FALSE)
+{
+    # use this code to install the package we're using for this lesson
+    BiocManager::install("UCLouvain-CBIO/rWSBIM1207")
+}
+
+library("rWSBIM1207")
+data(jdf)
+```
+
+### [Joining Tables](https://carpentries-incubator.github.io/bioc-intro/50-joining-tables/index.html)
+
+::: callout-tip
+## Key Points
+
+-   Join tables of data in R
+:::
+
+#### Challenge 1
+
+Using the `full_join` function, join tables `jdf4` and `jdf5`. What has happened for observations `P26039` and `P02468`?
+
+> ```{r}
+> # Insert code here
+
+full_join(jd4, jd5)
+> ```
+
+#### Challenge 2
+
+Join tables `jdf4` and `jdf5`, keeping only observations in `jdf4`.
+
+```{r}
+# Insert code here
+
+left_join(jdf5)
+```
+
+#### Challenge 3
+
+Join tables `jdf4` and `jdf5`, keeping only observations in `jdf5`.
+
+```{r}
+# Insert code here
+right_join(jdf5)
+```
+
+#### Challenge 4
+
+Join tables `jdf4` and `jdf5`, keeping observations observed in both tables.
+```{r}
+inner_join(jdf4, jdf5)
+```
+
+
+#### Challenge 5
+
+Given the inner join,
+
+```{r}
+inner_join(jdf6, jdf7)
+```
+
+interpret the result, where both tables have duplicated keys.
+
+\<insert answer here\>
